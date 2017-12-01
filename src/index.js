@@ -18,6 +18,14 @@ const server = restify.createServer({
     version: '1.0.0'
 });
 
+server.use(
+    function crossOrigin(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        return next();
+    }
+);
+
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
@@ -25,7 +33,10 @@ server.use(restify.plugins.bodyParser());
 server.get('/users', (req, res, next) => {
     User.find((err, users) => {
         if (err) res.send(500, 'Error.');
-        res.send(users);
+        res.send(users.reduce((acc, next) => {
+            acc[next._id] = next;
+            return acc;
+        }, {}));
         return next();
     });
 });
