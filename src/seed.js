@@ -1,39 +1,9 @@
-import seeder from 'mongoose-seed';
+import User from './models/User';
 
 export default () => {
-    // Data array containing seed data - documents organized by Model
-    const seedData = [
-        {
-            'model': 'User',
-            'documents': [
-                {
-                    'login': 'ojoe@gmail.com',
-                    'password': '123'
-                },
-                {
-                    'login': 'onick@gmail.com',
-                    'password': '123'
-                }
-            ]
-        }
+    let users = [
+        new User({ login: 'john', password: '123' }),
+        new User({ login: 'jane', password: '123' })
     ];
-
-    // Connect to MongoDB via Mongoose
-    seeder.connect('mongodb://localhost/rxsupp', function () {
-
-        // Load Mongoose models
-        seeder.loadModels([
-            'src/User.js'
-        ]);
-
-        // Clear specified collections
-        seeder.clearModels(['User'], function () {
-
-            // Callback to populate DB once collections have been cleared
-            seeder.populateModels(data, function () {
-                seeder.disconnect();
-            });
-        });
-    });
+    users.forEach(u => u.save());
 }
-
